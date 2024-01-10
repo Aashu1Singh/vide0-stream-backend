@@ -4,12 +4,12 @@ import { ApiError } from "../utils/ApiError.js";
 import { User } from "../models/user.model.js";
 
 const authenticate = async (req, res, next) => {
-  console.log(req.cookies);
+  // console.log(req.cookies);
 
   try {
     const token =
       req.cookies?.accessToken ||
-      req.header("Authorization")?.replace("Bearer ", "");
+      req.header("Authorization")?.replace("bearer ", "");
 
     if (!token) {
       throw new ApiError(400, "token is required");
@@ -17,6 +17,7 @@ const authenticate = async (req, res, next) => {
     //   console.log(token);
 
     const decodedToken = Jwt.verify(token, process.env.ACCESS_TOKEN_SECRET);
+    console.log("decoded token ", decodedToken);
 
     const user = await User.findById(decodedToken?._id).select(
       "-password -refreshToken"
